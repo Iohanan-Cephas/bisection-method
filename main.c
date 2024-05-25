@@ -2,62 +2,112 @@
 #include <stdio.h>
 #include "bissection.h"
 
-int main(){
+void clear_screen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+int main() {
     printf("======== Bisection Method ========\n");
-    int grau, opt = 1;
+    int degree, opt = 1;
     double a, b, x, E;
 
-    do{
+    do {
         printf("Digite o grau do polinomio: ");
-        scanf("%d", &grau);
-        double coeficientes[grau];
+        if (scanf("%d", &degree) != 1 || degree < 1) {
+            printf("Grau invalido. Por favor, tente novamente.\n");
+            continue;
+        }
+
+        double *coefficients = (double *)malloc((degree + 1) * sizeof(double));
+        
+        if (coefficients == NULL) {
+            printf("Erro de alocacao de memoria.\n");
+            return 1;
+        }
+
         printf("Digite os coeficientes do polinomio, comecando pelo termo de maior grau: ");
-        for (int i = 0; i <= grau; i++) {
-            scanf("%lf", &coeficientes[i]);
+        for (int i = 0; i <= degree; i++) {
+            if (scanf("%lf", &coefficients[i]) != 1) {
+                printf("Entrada invalida. Por favor, tente novamente.\n");
+                free(coefficients);
+                return 1;
+            }
         }
 
         printf("Digite o valor de 'a': ");
-        scanf("%lf", &a);
+        if (scanf("%lf", &a) != 1) {
+            printf("Entrada invalida. Por favor, tente novamente.\n");
+            free(coefficients);
+            return 1;
+        }
+
         printf("Digite o valor de 'b': ");
-        scanf("%lf", &b);
-        double fa = calculatePolynomial(coeficientes, grau, a);
-        double fb = calculatePolynomial(coeficientes, grau, b);
-        if((fa * fb) > 0){
-            do{
-                printf("O intervalo nao e aplicavel. Digite um novo intervalo!\n");
-                printf("Digite o valor de 'a': ");
-                scanf("%lf", &a);
-                printf("Digite o valor de 'b': ");
-                scanf("%lf", &b);
-                fa = calculatePolynomial(coeficientes, grau, a);
-                fb = calculatePolynomial(coeficientes, grau, b);
-            }while(fa*fb > 0);
+        if (scanf("%lf", &b) != 1) {
+            printf("Entrada invalida. Por favor, tente novamente.\n");
+            free(coefficients);
+            return 1;
+        }
+
+        double fa = calculatePolynomial(coefficients, degree, a);
+        double fb = calculatePolynomial(coefficients, degree, b);
+
+        while ((fa * fb) > 0) {
+            printf("O intervalo nao e aplicavel. Digite um novo intervalo!\n");
+            printf("Digite o valor de 'a': ");
+            if (scanf("%lf", &a) != 1) {
+                printf("Entrada invalida. Por favor, tente novamente.\n");
+                free(coefficients);
+                return 1;
+            }
+            printf("Digite o valor de 'b': ");
+            if (scanf("%lf", &b) != 1) {
+                printf("Entrada invalida. Por favor, tente novamente.\n");
+                free(coefficients);
+                return 1;
+            }
+            fa = calculatePolynomial(coefficients, degree, a);
+            fb = calculatePolynomial(coefficients, degree, b);
         }
 
         printf("Digite a tolerancia (epsilon): ");
-        scanf("%lf", &E);
+        if (scanf("%lf", &E) != 1 || E <= 0) {
+            printf("Tolerancia invalida. Por favor, tente novamente.\n");
+            free(coefficients);
+            return 1;
+        }
 
-        system("cls");
+        clear_screen();
 
         int aux = iterationsNumber(a, b, E);
         double result;
-        for(int i = 0; i <= aux; i++){
-            double c = C(a ,b);
-            printf("| iteracao %d | a = %.4lf | b = %.4lf | c = %.4lf | |b - a| = %.4lf | f(c) = %.4lf |\n", i, a, b, c, (b-a),calculatePolynomial(coeficientes, grau, c));
-            if(calculatePolynomial(coeficientes, grau, a) * calculatePolynomial(coeficientes, grau, c) < 0){
+        for (int i = 0; i <= aux; i++) {
+            double c = C(a, b);
+            double fc = calculatePolynomial(coefficients, degree, c);
+            printf("| iteracao %d | a = %.4lf | b = %.4lf | c = %.4lf | |b - a| = %.4lf | f(c) = %.4lf |\n", i, a, b, c, absolute(b - a), fc);
+            if (calculatePolynomial(coefficients, degree, a) * fc < 0) {
                 b = c;
-            }else{
+            } else {
                 a = c;
             }
             result = c;
         }
-        
+
         printf("A raiz aproximada e: %.4lf\n\n", result);
         printf("Deseja continuar? (0/1): ");
-        scanf("%d", &opt);
+        if (scanf("%d", &opt) != 1 || (opt != 0 && opt != 1)) {
+            printf("Opcao invalida. Encerrando o programa.\n");
+            free(coefficients);
+            return 1;
+        }
 
-        system("cls");
-    }while(opt != 0);
+        clear_screen();
+        free(coefficients);
+
+    } while (opt != 0);
 
     return 0;
 }

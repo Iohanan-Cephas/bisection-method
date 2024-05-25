@@ -7,4 +7,6 @@ double C(double, double);
 
 double calculatePolynomial(double [], int, double);
 
+double absolute(double);
+
 #endif

@@ -11,13 +11,16 @@ double C(double a, double b){
     return (a + b) / 2;
 }
 
-double calculatePolynomial(double coeficientes[], int grau, double x) {
-    double resultado = 0;
-    int i;
+double calculatePolynomial(double coefficients[], int degree, double x) {
+    double result = 0;
     
-    for (i = 0; i <= grau; i++) {
-        resultado += coeficientes[i] * pow(x, grau - i);
+    for (int i = 0; i <= degree; i++) {
+        result += coefficients[i] * pow(x, degree - i);
     }
     
-    return resultado;
+    return result;
+}
+
+double absolute(double x){
+    return (x < 0) ? -x : x;
 }
