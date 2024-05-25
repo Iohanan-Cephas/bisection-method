@@ -52,4 +52,12 @@ O projeto consiste em três arquivos principais:
 Para compilar o projeto, você pode usar um compilador de C como `gcc`. No terminal, navegue até o diretório onde os arquivos estão localizados e execute o seguinte comando:
 
 ```sh
-gcc -o bissection main.c bissection.c -lm
+gcc -o exec main.c bissection.c
+```
+### Execução
+
+Após compilado, para executar o projeto basta utilizar o seguinte comando no terminal:
+
+```sh
+./exec.exe
+```
